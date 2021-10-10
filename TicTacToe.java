@@ -20,19 +20,37 @@ public class TicTacToe {
         int selection = input.nextInt();
 
         //Make sure input is legal. If not reprompt
-        switch (selection) {
-            case 1:
-                return selection;
-            case 2:
-                return selection;
-            case 3:
-                return selection;
-            default:
-                System.out.println("Selection must be a number 1-3.");
-                System.out.println("Please select a menu option: ");
-                selection = getPlayerChoice(input);
+        if(selection > 0 && selection < 4) {
+            return selection;
         }
-        return selection;
+        else {
+            System.out.println("Selection must be a number 1-3.");
+            System.out.println("Please select a menu option: ");
+
+            selection = getPlayerChoice(input);
+            return selection;
+        }
+    }
+
+    //Displays the game board in its current state
+    public static void displayBoard(int[][] spaces) {
+        int i, j;   //index variables for looping over board
+
+        for(i = 0; i < spaces.length; ++i) {
+            for(j = 0; j < spaces[i].length; ++j) {
+                System.out.print(spaces[i][j]);
+
+                //Format the grid
+                if(j != 2) {
+                    System.out.print("|");
+                }
+
+                //Printing line in between rows
+                if((j == 2) && (i < 2)) {
+                    System.out.println("\n-----");
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -55,11 +73,16 @@ public class TicTacToe {
         menuChoice = getPlayerChoice(input);
 
 
-        while(!winCondition) {
+        //while(!winCondition) {
+            //display board
+            //get players move
+            //update board
+            //display the board
+            //check win condition
 
-        }
+        //}
 
-
+        displayBoard(coordinates);
 
 
     }
