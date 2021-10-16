@@ -218,6 +218,10 @@ public class TicTacToe {
                     //Update stat
                     ++numOfGamesPlayed;
 
+                    //Update win conditions
+                    winCondition = false;
+                    draw         = false;
+
                     while (!winCondition && !draw) {
 
                         //Player 1 turn
