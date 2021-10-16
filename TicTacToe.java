@@ -113,11 +113,22 @@ public class TicTacToe {
             }
         }
 
+        if(consecutive == 3) {
+            return true;
+        }
+
+        //REset consecutive
+        consecutive = 0;
+
         //Check Column
         for(i = 0; i < board.length; ++i) {
             if(board[i][col] == token) {
                 ++consecutive;
             }
+        }
+
+        if(consecutive == 3) {
+            return true;
         }
 
         //Reset consecutive
@@ -129,6 +140,10 @@ public class TicTacToe {
                 ++consecutive;
             }
             ++j;
+        }
+
+        if(consecutive == 3) {
+            return true;
         }
 
         //Reset consecutive
@@ -216,12 +231,12 @@ public class TicTacToe {
 
                         //Update stats variables
                         if(winCondition) {
-                            System.out.println("Player 1 wins!");
+                            System.out.println("Player 1 wins!\n");
                             ++gamesWon;
                             break;
                         }
                         else if(draw) {
-                            System.out.println("It's a draw.");
+                            System.out.println("It's a draw.\n");
                             ++draws;
                             break;
                         }
@@ -251,7 +266,14 @@ public class TicTacToe {
                     break;
                 }
                 case 2:
+                    avgWin = gamesWon / numOfGamesPlayed;
+
                     //Display stats
+                    System.out.println("-----Game Statistics-----");
+                    System.out.println("Number of games played: " + numOfGamesPlayed);
+                    System.out.println("Number of draws:        " + draws);
+                    System.out.println("Games won:              " + gamesWon);
+                    System.out.printf("Average games won:      %.2f\n\n", avgWin);
                     break;
                 case 3:
                     System.out.println("Goodbye!");
