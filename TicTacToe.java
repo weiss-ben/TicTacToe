@@ -90,8 +90,9 @@ public class TicTacToe {
     public static void updateBoard(int[] move, Pieces[][] board, Pieces token) {
         for(int i = 0; i < board.length; ++i) {
             for(int j = 1; j <= board[i].length; ++j) {
-                if((i == move[0]) && (j == move[1])) {
-                    board[i - 1][j - 1] = token;
+                if((i == move[0] - 1) && (j == move[1])) {
+                    board[i][j - 1] = token;
+                    break;
                 }
             }
         }
@@ -119,6 +120,9 @@ public class TicTacToe {
             }
         }
 
+        //Reset consecutive
+        consecutive = 0;
+
         //Check diagonal from 0,0
         for(i = 0; i < board.length; ++i) {
             if(board[i][j] == token) {
@@ -126,6 +130,9 @@ public class TicTacToe {
             }
             ++j;
         }
+
+        //Reset consecutive
+        consecutive = 0;
 
         //Check diagonal from 3,1
         j = 2;
@@ -137,13 +144,6 @@ public class TicTacToe {
         }
 
         if(consecutive == 3) {
-            if(token == Pieces.X) {
-                System.out.println("Player 1 wins!");
-            }
-            else {
-                System.out.println("Player 2 wins!");
-            }
-
             return true;
         }
         else {
@@ -159,6 +159,10 @@ public class TicTacToe {
 
         for(i = 0; i < board.length; ++i) {
             for(j = 0; j < board[i].length; ++j) {
+                if(board[i][j] == empty) {
+                    draw = false;
+                    break;
+                }
                 if((board[i][j] != empty) && !winCond) {
                     draw = true;
                 }
@@ -177,6 +181,7 @@ public class TicTacToe {
         //stats variables
         int numOfGamesPlayed = 0;
         int gamesWon         = 0;
+        int draws            = 0;
         double avgWin        = 0.0;
 
         boolean winCondition = false;
@@ -185,22 +190,78 @@ public class TicTacToe {
         int menuChoice;
         int[] playerMove;
 
-        //Get first player input
-        displayMenu();
-        menuChoice = getPlayerChoice(input);
+        do {
+            //Get player input
+            displayMenu();
+            menuChoice = getPlayerChoice(input);
+            switch (menuChoice) {
+                case 1: {
+                    //Set up the board
+                    initializeBoard(board);
+                    displayBoard(board);
 
-        initializeBoard(board);
-        displayBoard(board);
+                    //Update stat
+                    ++numOfGamesPlayed;
 
+                    while (!winCondition && !draw) {
 
-        while(!winCondition && !draw) {
-            playerMove = playerMove(input);
-            updateBoard(playerMove, board, Pieces.X);
-            displayBoard(board);
+                        //Player 1 turn
+                        playerMove = playerMove(input);
+                        updateBoard(playerMove, board, Pieces.X);
+                        displayBoard(board);
 
-            //Checks for a win or draw
-            winCondition = checkIfWinner(board, playerMove, Pieces.X);
-            draw = checkIfDraw(board, winCondition);
-        }
+                        //Checks for a win or draw
+                        winCondition = checkIfWinner(board, playerMove, Pieces.X);
+                        draw = checkIfDraw(board, winCondition);
+
+                        //Update stats variables
+                        if(winCondition) {
+                            System.out.println("Player 1 wins!");
+                            ++gamesWon;
+                            break;
+                        }
+                        else if(draw) {
+                            System.out.println("It's a draw.");
+                            ++draws;
+                            break;
+                        }
+                        else {
+                            //Player 2 turn
+                            playerMove = playerMove(input);
+                            updateBoard(playerMove, board, Pieces.O);
+                            displayBoard(board);
+
+                            //Checks for a win or draw
+                            winCondition = checkIfWinner(board, playerMove, Pieces.O);
+                            draw = checkIfDraw(board, winCondition);
+
+                            if(winCondition) {
+                                System.out.println("Player 2 wins!");
+                                break;
+                            }
+
+                            if(draw) {
+                                System.out.println("It's a draw.");
+                                ++draws;
+                                break;
+                            }
+                        }
+
+                    }
+                    break;
+                }
+                case 2:
+                    //Display stats
+                    break;
+                case 3:
+                    System.out.println("Goodbye!");
+                    exit = true;
+                    break;
+                default:
+                    System.out.println("Invalid input!");
+                    System.out.println("Please enter a valid menu choice.");
+                    break;
+            }
+        } while(!exit);
     }
 }
