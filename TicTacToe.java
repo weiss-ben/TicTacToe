@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class TicTacToe {
-    public enum Pieces {X, O,};
+    public enum Pieces {X, O, I};
 
     //Displays the main menu
     public static void displayMenu() {
@@ -28,7 +28,16 @@ public class TicTacToe {
             System.out.println("Please select a menu option: ");
 
             selection = getPlayerChoice(input);
-            return selection;
+        }
+        return selection;
+    }
+    public static void initializeBoard(Pieces[][] board) {
+        int i, j;
+
+        for(i = 0; i < board.length; ++i) {
+            for(j = 0; j < board[i].length; ++j) {
+                board[i][j] = Pieces.I;
+            }
         }
     }
 
@@ -65,7 +74,7 @@ public class TicTacToe {
         System.out.println("\n");
     }
 
-    //Gets values for the players move
+    //Get values for the players move
     public static int[] playerMove(Scanner input) {
         int[] moveCoords = new int[2];
 
@@ -78,14 +87,84 @@ public class TicTacToe {
     }
 
     //Updates the board state with player move
-    public static void updateBoard(int[] move, Pieces[][] board) {
+    public static void updateBoard(int[] move, Pieces[][] board, Pieces token) {
         for(int i = 0; i < board.length; ++i) {
-            for(int j = 0; j < board[i].length; ++j) {
+            for(int j = 1; j <= board[i].length; ++j) {
                 if((i == move[0]) && (j == move[1])) {
-                    board[i - 1][j - 1] = Pieces.X;
+                    board[i - 1][j - 1] = token;
                 }
             }
         }
+    }
+
+    //Checks if the last turn won the game
+    public static boolean checkIfWinner(Pieces[][] board, int[] lastMove, Pieces token) {
+        int i;
+        int j = 0;
+        int row = lastMove[0] - 1;
+        int col = lastMove[1] - 1;
+        int consecutive = 0;
+
+        //Check row
+        for(i = 0; i < board[row].length; ++i) {
+            if(board[row][i] == token) {
+                ++consecutive;
+            }
+        }
+
+        //Check Column
+        for(i = 0; i < board.length; ++i) {
+            if(board[i][col] == token) {
+                ++consecutive;
+            }
+        }
+
+        //Check diagonal from 0,0
+        for(i = 0; i < board.length; ++i) {
+            if(board[i][j] == token) {
+                ++consecutive;
+            }
+            ++j;
+        }
+
+        //Check diagonal from 3,1
+        j = 2;
+        for(i = 0; i < board.length; ++i) {
+            if(board[i][j] == token) {
+                ++consecutive;
+            }
+            --j;
+        }
+
+        if(consecutive == 3) {
+            if(token == Pieces.X) {
+                System.out.println("Player 1 wins!");
+            }
+            else {
+                System.out.println("Player 2 wins!");
+            }
+
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    //Checks if the game is a draw
+    public static boolean checkIfDraw(Pieces[][] board, boolean winCond) {
+        int i, j;
+        Pieces empty = Pieces.I;
+        boolean draw = false;
+
+        for(i = 0; i < board.length; ++i) {
+            for(j = 0; j < board[i].length; ++j) {
+                if((board[i][j] != empty) && !winCond) {
+                    draw = true;
+                }
+            }
+        }
+        return draw;
     }
 
     public static void main(String[] args) {
@@ -101,6 +180,8 @@ public class TicTacToe {
         double avgWin        = 0.0;
 
         boolean winCondition = false;
+        boolean draw         = false;
+        boolean exit         = false;
         int menuChoice;
         int[] playerMove;
 
@@ -108,16 +189,18 @@ public class TicTacToe {
         displayMenu();
         menuChoice = getPlayerChoice(input);
 
+        initializeBoard(board);
+        displayBoard(board);
 
-        //while(!winCondition) {
-            displayBoard(board);
+
+        while(!winCondition && !draw) {
             playerMove = playerMove(input);
-            updateBoard(playerMove, board);
+            updateBoard(playerMove, board, Pieces.X);
             displayBoard(board);
-            //check win condition
 
-        //}
-
-
+            //Checks for a win or draw
+            winCondition = checkIfWinner(board, playerMove, Pieces.X);
+            draw = checkIfDraw(board, winCondition);
+        }
     }
 }
